@@ -1,20 +1,23 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
-import Subscriber from '@/models/Subscriber';
+import { supabase } from '@/lib/supabase';
 
 export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
+  const { searchParams } = new URL(request.url);
+  const email = searchParams.get('email');
 
-    if (!email) {
-        return new NextResponse('Email is required', { status: 400 });
-    }
+  if (!email) {
+    return new NextResponse('Email is required', { status: 400 });
+  }
 
-    try {
-        await dbConnect();
-        await Subscriber.findOneAndUpdate({ email }, { is_active: false });
+  try {
+    const { error } = await supabase
+      .from('subscribers')
+      .update({ is_active: false })
+      .eq('email', email);
 
-        return new NextResponse(`
+    if (error) throw error;
+
+    return new NextResponse(`
       <html>
         <head><title>Unsubscribed</title></head>
         <body style="font-family: sans-serif; text-align: center; padding: 50px;">
@@ -23,10 +26,10 @@ export async function GET(request: Request) {
         </body>
       </html>
     `, {
-            headers: { 'Content-Type': 'text/html' },
-        });
-    } catch (error) {
-        console.error('Unsubscribe error:', error);
-        return new NextResponse('Internal Server Error', { status: 500 });
-    }
+      headers: { 'Content-Type': 'text/html' },
+    });
+  } catch (error) {
+    console.error('Unsubscribe error:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
 }
