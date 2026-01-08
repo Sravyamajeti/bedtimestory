@@ -1,65 +1,128 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import Link from 'next/link';
+
+export default function LandingPage() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus('success');
+        setMessage('🎉 Subscribed! Check your inbox at 6 AM for your first story.');
+        setEmail('');
+      } else {
+        setStatus('error');
+        setMessage(data.error || 'Something went wrong');
+      }
+    } catch (error) {
+      setStatus('error');
+      setMessage('Failed to subscribe. Please try again.');
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
+      <div className="container mx-auto px-4 py-16">
+        {/* Header */}
+        <header className="text-center mb-16">
+          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg">
+            🌙 Bedtime Stories
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-2xl text-purple-200">
+            Magical AI-generated tales delivered every morning
           </p>
+        </header>
+
+        {/* Hero Section */}
+        <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-12 mb-12 border border-white/20 shadow-2xl">
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Sweet Dreams Start Here ✨
+            </h2>
+            <p className="text-xl text-purple-100 leading-relaxed mb-4">
+              Every night, our AI creates a brand new, calming bedtime story.
+            </p>
+            <p className="text-lg text-purple-200 leading-relaxed">
+              Wake up to a fresh tale in your inbox at 6:00 AM. Simple, safe, and magical.
+            </p>
+          </div>
+
+          {/* Features */}
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+              <div className="text-4xl mb-3">📚</div>
+              <h3 className="text-white font-semibold mb-2">Fresh Daily</h3>
+              <p className="text-purple-200 text-sm">New story every single day</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+              <div className="text-4xl mb-3">🛡️</div>
+              <h3 className="text-white font-semibold mb-2">100% Safe</h3>
+              <p className="text-purple-200 text-sm">No scary content, child-friendly</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+              <div className="text-4xl mb-3">✉️</div>
+              <h3 className="text-white font-semibold mb-2">Email Delivery</h3>
+              <p className="text-purple-200 text-sm">Arrives at 6 AM daily</p>
+            </div>
+          </div>
+
+          {/* Subscribe Form */}
+          <form onSubmit={handleSubscribe} className="max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                required
+                className="flex-1 px-6 py-4 rounded-xl bg-white text-gray-900 text-lg font-medium placeholder:text-gray-500 focus:outline-none focus:ring-4 focus:ring-pink-400 shadow-lg"
+              />
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+              >
+                {status === 'loading' ? 'Subscribing...' : 'Subscribe for Free'}
+              </button>
+            </div>
+            {message && (
+              <p className={`mt-4 text-center font-medium ${status === 'success' ? 'text-green-300' : 'text-red-300'}`}>
+                {message}
+              </p>
+            )}
+          </form>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Read Today's Story Link */}
+        <div className="text-center">
+          <Link
+            href="/story"
+            className="inline-block px-8 py-4 bg-white/20 backdrop-blur text-white font-semibold rounded-xl hover:bg-white/30 transition-all border border-white/30"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            📖 Read Today&apos;s Story
+          </Link>
         </div>
-      </main>
+
+        {/* Footer */}
+        <footer className="text-center mt-16 text-purple-300 text-sm">
+          <p>Made with ❤️ by MOM</p>
+        </footer>
+      </div>
     </div>
   );
 }
