@@ -2,13 +2,11 @@ import Link from 'next/link';
 import { supabase, DEMO_MODE } from '@/lib/supabase';
 import { mockData } from '@/lib/mockData';
 
-async function getTodayStory() {
-    const today = new Date().toISOString().split('T')[0];
-
+async function getLatestStory() {
     // Demo mode: use mock data
     if (DEMO_MODE) {
+        // @ts-ignore - mockData structure varies in dev
         return await mockData.findStory({
-            date: today,
             status: { $in: ['APPROVED', 'SENT'] }
         });
     }
@@ -17,15 +15,16 @@ async function getTodayStory() {
     const { data: story } = await supabase
         .from('stories')
         .select('*')
-        .eq('date', today)
         .in('status', ['APPROVED', 'SENT'])
+        .order('date', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
     return story;
 }
 
 export default async function StoryPage() {
-    const story = await getTodayStory();
+    const story = await getLatestStory();
 
     if (!story) {
         return (
@@ -33,10 +32,10 @@ export default async function StoryPage() {
                 <div className="max-w-2xl bg-white/10 backdrop-blur-lg rounded-3xl p-12 text-center border border-white/20">
                     <div className="text-8xl mb-6">🌙</div>
                     <h1 className="text-4xl font-bold text-white mb-4">
-                        No Story Yet Today
+                        No Stories Yet
                     </h1>
                     <p className="text-xl text-purple-200 mb-8">
-                        Come back later or subscribe to get stories delivered to your inbox at 6:00 AM!
+                        Check back later or subscribe to get stories delivered to your inbox!
                     </p>
                     <Link
                         href="/"
@@ -69,10 +68,24 @@ export default async function StoryPage() {
                     >
                         ← Back to Home
                     </Link>
-                    <h1 className="text-5xl font-bold text-white mb-2 drop-shadow-lg">
+                    <div className="mb-4 flex flex-col items-center gap-3">
+                        <span className="inline-block px-4 py-1 bg-white/10 backdrop-blur rounded-full text-pink-200 text-sm font-medium tracking-wide border border-white/10">
+                            {new Date(story.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                        </span>
+                        {/* Tags */}
+                        {story.tags && story.tags.length > 0 && (
+                            <div className="flex gap-2">
+                                {story.tags.map((tag: string, i: number) => (
+                                    <span key={i} className="px-3 py-1 bg-purple-500/30 text-purple-100 rounded-full text-xs font-semibold border border-purple-400/30">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg leading-tight">
                         {story.title}
                     </h1>
-                    <p className="text-purple-200">Today&apos;s Bedtime Story</p>
                 </div>
 
                 {/* Story Card */}

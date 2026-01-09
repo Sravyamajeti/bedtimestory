@@ -8,6 +8,7 @@ interface Story {
     title: string;
     summary_bullets: string[];
     content: string;
+    tags: string[];
     status: string;
     date: string;
 }
@@ -119,7 +120,7 @@ export default function AdminReviewPage({ params }: { params: Promise<{ id: stri
                             type="text"
                             value={story.title}
                             onChange={(e) => setStory({ ...story, title: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                         />
                     </div>
 
@@ -138,10 +139,27 @@ export default function AdminReviewPage({ params }: { params: Promise<{ id: stri
                                     newBullets[index] = e.target.value;
                                     setStory({ ...story, summary_bullets: newBullets });
                                 }}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                                 placeholder={`Bullet ${index + 1}`}
                             />
                         ))}
+                    </div>
+
+                    {/* Tags */}
+                    <div className="mb-6">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Tags (comma separated)
+                        </label>
+                        <input
+                            type="text"
+                            value={story.tags ? story.tags.join(', ') : ''}
+                            onChange={(e) => setStory({
+                                ...story,
+                                tags: e.target.value.split(',').map(t => t.trim())
+                            })}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+                            placeholder="Nature, Magic, Friendship"
+                        />
                     </div>
 
                     {/* Content */}
@@ -153,7 +171,7 @@ export default function AdminReviewPage({ params }: { params: Promise<{ id: stri
                             value={story.content}
                             onChange={(e) => setStory({ ...story, content: e.target.value })}
                             rows={12}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                         />
                     </div>
 
@@ -168,8 +186,17 @@ export default function AdminReviewPage({ params }: { params: Promise<{ id: stri
                                 ))}
                             </ul>
                         </div>
+                        {story.tags && story.tags.length > 0 && (
+                            <div className="mb-4 flex gap-2">
+                                {story.tags.map((tag, i) => (
+                                    <span key={i} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                         <div
-                            className="prose max-w-none"
+                            className="prose max-w-none text-black"
                             dangerouslySetInnerHTML={{ __html: story.content }}
                         />
                     </div>

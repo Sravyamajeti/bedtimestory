@@ -3,7 +3,7 @@ let mockStories: any[] = [
     {
         _id: 'mock-story-1',
         date: new Date().toISOString().split('T')[0], // Today's date
-        status: 'APPROVED',
+        status: 'SENT',
         title: 'Luna and the Starlight Garden',
         summary_bullets: [
             '🌟 Luna discovers a magical garden that only appears at night',
@@ -49,6 +49,10 @@ export const mockData = {
                 (query.status?.$in ? query.status.$in.includes(s.status) : true));
         }
         return mockStories[0];
+    },
+
+    async getStories() {
+        return mockStories;
     },
 
     async findStoryById(id: string) {

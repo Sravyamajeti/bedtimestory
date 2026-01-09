@@ -14,6 +14,9 @@ export async function generateStory(prompt: string) {
         - title: String
         - summary_bullets: Array of 3 strings (with emojis)
         - content: String (HTML formatted with <p> tags).
+        - tags: Array of Strings (Must be 2-3 tags from list below)
+
+        Choose 2-3 relevant category tags from this list: ['Animals', 'Nature', 'Magic', 'Space', 'Friendship', 'Fairy Tales', 'Mystery', 'Adventure'].
         
         STRICT SAFETY: No adult language, violence, or explicit content. Must be 100% child-friendly.
         TONE: Simple plain English, easy to read, absolutely no scary content.`

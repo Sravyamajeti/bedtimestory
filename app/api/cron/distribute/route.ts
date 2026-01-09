@@ -17,7 +17,7 @@ export async function GET() {
     if (!story) {
       // No story for today - alert admin
       await sendEmail({
-        to: process.env.GMAIL_USER!,
+        to: process.env.ADMIN_EMAIL!,
         subject: '⚠️ No Story for Today',
         html: `<p>No story was found for ${today}. Please check the system.</p>`,
       });
@@ -27,7 +27,7 @@ export async function GET() {
     if (story.status !== 'APPROVED') {
       // Story not approved - alert admin
       await sendEmail({
-        to: process.env.GMAIL_USER!,
+        to: process.env.ADMIN_EMAIL!,
         subject: '⚠️ Story Not Approved',
         html: `<p>The story for ${today} is still in ${story.status} status. It has not been sent to subscribers.</p>`,
       });

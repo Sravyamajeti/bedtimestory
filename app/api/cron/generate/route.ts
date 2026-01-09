@@ -20,7 +20,7 @@ export async function GET() {
         if (existing) {
             if (existing.status === 'DRAFT') {
                 console.log('Story exists but is in DRAFT. Resending email...');
-                const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_USER;
+                const adminEmail = process.env.ADMIN_EMAIL;
                 const reviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/review/${existing.id}?secret_key=${process.env.NEXT_PUBLIC_ADMIN_SECRET}`;
 
                 await sendEmail({
@@ -52,6 +52,7 @@ export async function GET() {
                 title: aiResponse.title,
                 summary_bullets: aiResponse.summary_bullets,
                 content: aiResponse.content,
+                tags: aiResponse.tags || [], // New field
             }])
             .select()
             .single();
@@ -59,7 +60,7 @@ export async function GET() {
         if (error || !story) throw error || new Error('Failed to insert story');
 
         // Send email to Admin
-        const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_USER;
+        const adminEmail = process.env.ADMIN_EMAIL;
         const reviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/review/${story.id}?secret_key=${process.env.NEXT_PUBLIC_ADMIN_SECRET}`;
 
         await sendEmail({

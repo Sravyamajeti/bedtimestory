@@ -31,6 +31,7 @@ export async function PUT(
     try {
         const { id } = await params;
         const body = await request.json();
+        console.log('Update Body:', body);
 
         const { data: story, error } = await supabase
             .from('stories')
@@ -39,12 +40,14 @@ export async function PUT(
                 summary_bullets: body.summary_bullets,
                 content: body.content,
                 status: body.status,
+                tags: body.tags,
             })
             .eq('id', id)
             .select()
             .single();
 
         if (error || !story) {
+            console.error('Update Error:', error);
             return NextResponse.json({ error: 'Story not found or update failed' }, { status: 404 });
         }
 

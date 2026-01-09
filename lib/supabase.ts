@@ -17,6 +17,7 @@ export interface Story {
     title: string;
     summary_bullets: string[];
     content: string;
+    tags: string[]; // Added tags support
     created_at: string;
 }
 
