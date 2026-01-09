@@ -30,7 +30,7 @@ export default function LandingPage() {
               Every night, our AI creates a brand new, calming bedtime story.
             </p>
             <p className="text-base md:text-lg text-purple-200 leading-relaxed mb-8">
-              Wake up to a fresh tale in your inbox at 6:00 AM.
+              Wake up to a fresh tale in your inbox.
             </p>
 
             {/* Subscribe Form (Top) */}
