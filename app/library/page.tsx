@@ -89,13 +89,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             >
                                 <div className="mb-4">
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className="text-xs font-semibold tracking-wider text-pink-300 uppercase">
-                                            {new Date(story.date).toLocaleDateString('en-US', {
-                                                weekday: 'short',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })}
-                                        </span>
+                                        {/* Date removed */}
                                         {story.tags && story.tags[0] && (
                                             <span className="text-[10px] bg-purple-500/30 px-2 py-0.5 rounded text-purple-100 border border-purple-400/30">
                                                 {story.tags[0]} {story.tags.length > 1 && `+${story.tags.length - 1}`}

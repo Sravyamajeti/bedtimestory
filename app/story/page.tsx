@@ -69,9 +69,7 @@ export default async function StoryPage() {
                         ← Back to Home
                     </Link>
                     <div className="mb-4 flex flex-col items-center gap-3">
-                        <span className="inline-block px-4 py-1 bg-white/10 backdrop-blur rounded-full text-pink-200 text-sm font-medium tracking-wide border border-white/10">
-                            {new Date(story.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </span>
+                        {/* Date removed as per request */}
                         {/* Tags */}
                         {story.tags && story.tags.length > 0 && (
                             <div className="flex gap-2">

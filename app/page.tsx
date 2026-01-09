@@ -63,7 +63,7 @@ export default function LandingPage() {
                 <div className="text-3xl md:text-4xl mb-3">💌</div>
                 <h3 className="text-white font-bold text-lg mb-2">Daily Delivery</h3>
                 <p className="text-purple-100 text-sm leading-relaxed">
-                  A fresh, creative story lands in your inbox every morning at 6 AM. Start the day (or end it) with magic.
+                  A fresh, creative story lands in your inbox everyday. Start the day (or end it) with magic.
                 </p>
               </div>
             </div>
