@@ -13,11 +13,29 @@ export async function GET() {
         // Check if story already exists for tomorrow
         const { data: existing } = await supabase
             .from('stories')
-            .select('id')
+            .select('*')
             .eq('date', dateStr)
             .maybeSingle();
 
         if (existing) {
+            if (existing.status === 'DRAFT') {
+                console.log('Story exists but is in DRAFT. Resending email...');
+                const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_USER;
+                const reviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/review/${existing.id}?secret_key=${process.env.NEXT_PUBLIC_ADMIN_SECRET}`;
+
+                await sendEmail({
+                    to: adminEmail!,
+                    subject: `📖 Review Tomorrow's Story: ${existing.title}`,
+                    html: `
+                        <h2>Review Pending for ${dateStr}</h2>
+                        <h3>${existing.title}</h3>
+                        <p>This story was already generated but hasn't been approved yet.</p>
+                        <p>Click the link below to review and approve:</p>
+                        <a href="${reviewUrl}" style="display: inline-block; padding: 12px 24px; background: #4F46E5; color: white; text-decoration: none; border-radius: 6px;">Review Story</a>
+                    `,
+                });
+                return NextResponse.json({ message: 'Resent email for existing draft', storyId: existing.id });
+            }
             return NextResponse.json({ message: 'Story already exists for tomorrow', storyId: existing.id });
         }
 

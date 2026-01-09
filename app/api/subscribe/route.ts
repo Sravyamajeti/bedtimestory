@@ -39,7 +39,7 @@ export async function POST(request: Request) {
                         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                             <h1 style="color: #4F46E5;">Welcome to Bedtime Stories! 🌙</h1>
                             <p style="color: #374151; font-size: 16px;">
-                                You've successfully subscribed. Get ready for magical tales delivered straight to your inbox every morning at 6 AM.
+                                You've successfully subscribed. Get ready for magical tales delivered straight to your inbox everyday.
                             </p>
                             <div style="background: #F3F4F6; padding: 16px; border-radius: 8px; margin: 20px 0;">
                                 <h3 style="margin-top: 0;">✨ What to expect:</h3>
