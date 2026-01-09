@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Bedtime Stories - Magical AI-Generated Tales",
-  description: "Receive a new, calming bedtime story every morning for your children.",
+  description: "Receive a new, calming bedtime story every day for your children.",
 };
 
 export default function RootLayout({
