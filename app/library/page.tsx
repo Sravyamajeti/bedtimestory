@@ -144,7 +144,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 {/* Subscribe CTA at bottom */}
                 <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 text-center border border-white/20 shadow-xl">
                     <h3 className="text-2xl font-bold text-white mb-4">Never Miss a Story</h3>
-                    <p className="text-purple-200 mb-8">Get these stories delivered to your inbox every morning at 6 AM.</p>
+                    <p className="text-purple-200 mb-8">Get these stories delivered to your inbox everyday.</p>
                     <SubscribeForm />
                 </div>
 
