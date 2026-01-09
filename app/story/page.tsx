@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { supabase, DEMO_MODE } from '@/lib/supabase';
 import { mockData } from '@/lib/mockData';
@@ -21,6 +22,31 @@ async function getLatestStory() {
         .maybeSingle();
 
     return story;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+    const story = await getLatestStory();
+
+    if (!story) {
+        return {
+            title: "No Stories Yet | Bedtime Stories",
+            description: "Check back later for new magical bedtime stories."
+        };
+    }
+
+    const cleanDescription = story.summary_bullets.join(' ').replace(/[^\w\s.,!]/g, '');
+
+    return {
+        title: story.title,
+        description: cleanDescription.substring(0, 160),
+        openGraph: {
+            title: story.title,
+            description: cleanDescription,
+            type: 'article',
+            publishedTime: story.date,
+            tags: story.tags,
+        }
+    };
 }
 
 export default async function StoryPage() {

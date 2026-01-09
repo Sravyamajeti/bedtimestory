@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { supabase, DEMO_MODE } from '@/lib/supabase';
 import { mockData } from '@/lib/mockData';
+import JsonLd from '@/app/components/JsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +24,27 @@ async function getStoryById(id: string) {
         .maybeSingle();
 
     return story;
+}
+
+export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
+    const { id } = await params;
+    const story = await getStoryById(id);
+
+    if (!story) return { title: 'Story Not Found' };
+
+    const cleanDescription = story.summary_bullets.join(' ').replace(/[^\w\s.,!]/g, '');
+
+    return {
+        title: story.title,
+        description: cleanDescription.substring(0, 160),
+        openGraph: {
+            title: story.title,
+            description: cleanDescription,
+            type: 'article',
+            publishedTime: story.date,
+            tags: story.tags,
+        }
+    };
 }
 
 export default async function StoryPage({ params }: StoryPageProps) {
@@ -52,6 +75,21 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 py-12 px-4">
+            <JsonLd data={{
+                '@context': 'https://schema.org',
+                '@type': 'ShortStory',
+                headline: story.title,
+                description: story.summary_bullets.join(' '),
+                image: `https://bedtimestories.productmama.dev/og?title=${encodeURIComponent(story.title)}`, // dynamic OG image URL
+                datePublished: story.date,
+                author: {
+                    '@type': 'Organization',
+                    name: 'Bedtime Stories AI'
+                },
+                genre: story.tags,
+                wordCount: story.content.split(' ').length,
+                inLanguage: 'en-US'
+            }} />
             <div className="max-w-4xl mx-auto">
                 {/* Demo Mode Badge */}
                 {DEMO_MODE && (

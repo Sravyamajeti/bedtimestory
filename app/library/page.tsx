@@ -8,6 +8,14 @@ import Link from 'next/link';
 // Revalidate every hour
 export const revalidate = 3600;
 
+export const metadata = {
+    title: "Story Library",
+    description: "Browse our collection of free, AI-generated bedtime stories for kids. Short, calming tales for sleep.",
+    alternates: {
+        canonical: '/library',
+    },
+};
+
 interface LibraryPageProps {
     searchParams: Promise<{ tag?: string }>;
 }
@@ -142,10 +150,29 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 )}
 
                 {/* Subscribe CTA at bottom */}
-                <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 text-center border border-white/20 shadow-xl">
+                <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 text-center border border-white/20 shadow-xl mb-24">
                     <h3 className="text-2xl font-bold text-white mb-4">Never Miss a Story</h3>
                     <p className="text-purple-200 mb-8">Get these stories delivered to your inbox everyday.</p>
                     <SubscribeForm />
+                </div>
+
+                {/* FAQ Section */}
+                <div className="max-w-3xl mx-auto mb-16 text-white">
+                    <h2 className="text-3xl font-bold text-center mb-8 drop-shadow-md">Frequently Asked Questions</h2>
+                    <div className="space-y-6">
+                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
+                            <h3 className="text-xl font-bold mb-2">Are these bedtime stories free to read?</h3>
+                            <p className="text-purple-100">Yes, all our <em className="text-pink-200">short bedtime stories for kids</em> are completely free to read online. Our library is updated daily with new <em className="text-pink-200">AI-generated tales</em>.</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
+                            <h3 className="text-xl font-bold mb-2">How does the AI story generator work?</h3>
+                            <p className="text-purple-100">Our <em className="text-pink-200">AI story generator</em> creates unique, child-safe tales every night. Each story is human-reviewed to ensure it's perfect for a peaceful night's sleep.</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
+                            <h3 className="text-xl font-bold mb-2">What age group are these stories for?</h3>
+                            <p className="text-purple-100">Our stories are written to be calm and engaging for children aged 3-10. They make excellent <em className="text-pink-200">short stories for sleep</em> and quiet time.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <Footer />
