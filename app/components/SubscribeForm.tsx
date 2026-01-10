@@ -50,7 +50,7 @@ export default function SubscribeForm() {
                     disabled={status === 'loading'}
                     className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 whitespace-nowrap"
                 >
-                    {status === 'loading' ? 'Values...' : 'Subscribe'}
+                    {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
                 </button>
             </div>
             {message && (

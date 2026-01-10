@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase, DEMO_MODE } from '@/lib/supabase';
 import { mockData } from '@/lib/mockData';
 import { sendEmail } from '@/lib/email';
+import { getWelcomeEmailHtml } from '@/lib/email-templates';
 
 export async function POST(request: Request) {
     try {
@@ -35,25 +36,7 @@ export async function POST(request: Request) {
                 await sendEmail({
                     to: email,
                     subject: '🌙 Welcome to Bedtime Stories!',
-                    html: `
-                        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-                            <h1 style="color: #4F46E5;">Welcome to Bedtime Stories! 🌙</h1>
-                            <p style="color: #374151; font-size: 16px;">
-                                You've successfully subscribed. Get ready for magical tales delivered straight to your inbox everyday.
-                            </p>
-                            <div style="background: #F3F4F6; padding: 16px; border-radius: 8px; margin: 20px 0;">
-                                <h3 style="margin-top: 0;">✨ What to expect:</h3>
-                                <ul style="color: #4B5563;">
-                                    <li>Unique, AI-generated stories appropriate for children.</li>
-                                    <li>Adventures, fables, and calming bedtime tales.</li>
-                                    <li>A perfect way to start or end the day!</li>
-                                </ul>
-                            </div>
-                            <p style="font-size: 12px; color: #6B7280; text-align: center; margin-top: 40px;">
-                                If you wish to stop receiving stories, you can <a href="${unsubscribeUrl}" style="color: #6B7280;">unsubscribe here</a>.
-                            </p>
-                        </div>
-                    `
+                    html: getWelcomeEmailHtml(unsubscribeUrl)
                 });
             } catch (e) {
                 console.error("Failed to send welcome email:", e);

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendEmail } from '@/lib/email';
+import { getStoryEmailHtml } from '@/lib/email-templates';
 
 export async function GET() {
   try {
@@ -51,28 +52,7 @@ export async function GET() {
       return sendEmail({
         to: subscriber.email,
         subject: `🌙 Today's Bedtime Story: ${story.title}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #4F46E5;">${story.title}</h1>
-            
-            <div style="background: #F3F4F6; padding: 16px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0;">📚 Story Summary:</h3>
-              <ul>
-                ${story.summary_bullets.map((bullet: string) => `<li>${bullet}</li>`).join('')}
-              </ul>
-            </div>
-            
-            <div style="line-height: 1.8; color: #374151;">
-              ${story.content}
-            </div>
-            
-            <hr style="margin: 40px 0; border: none; border-top: 1px solid #E5E7EB;">
-            
-            <p style="font-size: 12px; color: #6B7280; text-align: center;">
-              <a href="${unsubscribeUrl}" style="color: #6B7280;">Unsubscribe</a>
-            </p>
-          </div>
-        `,
+        html: getStoryEmailHtml(story, unsubscribeUrl),
       });
     });
 

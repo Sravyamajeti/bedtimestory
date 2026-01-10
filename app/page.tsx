@@ -51,10 +51,10 @@ export default function LandingPage() {
 
               {/* Feature 2: Merged Benefit */}
               <div className="bg-white/10 rounded-xl p-5 md:p-6 backdrop-blur hover:bg-white/20 transition-colors">
-                <div className="text-3xl md:text-4xl mb-3">📵</div>
-                <h3 className="text-white font-bold text-lg mb-2">Screen-Free Bonding</h3>
+                <div className="text-3xl md:text-4xl mb-3">🧘</div>
+                <h3 className="text-white font-bold text-lg mb-2">Cut the Clutter</h3>
                 <p className="text-purple-100 text-sm leading-relaxed">
-                  Read directly from your phone while your child listens. Anytime, anywhere—no need for them to stare at a screen.
+                  No need to spend endless time searching. We curate and deliver a single, perfect story for you every day.
                 </p>
               </div>
 

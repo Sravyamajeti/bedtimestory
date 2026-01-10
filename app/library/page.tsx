@@ -5,8 +5,8 @@ import Footer from '@/app/components/Footer';
 import SubscribeForm from '@/app/components/SubscribeForm';
 import Link from 'next/link';
 
-// Revalidate every hour
-export const revalidate = 3600;
+// Revalidate frequently to show new stories immediately
+export const revalidate = 0;
 
 export const metadata = {
     title: "Story Library",

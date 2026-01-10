@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { generateStory } from '@/lib/ai';
 import { sendEmail } from '@/lib/email';
+import { getAdminReviewEmailHtml } from '@/lib/email-templates';
+
+export const maxDuration = 60; // Allow up to 60 seconds for AI generation
 
 export async function GET() {
     try {
@@ -26,13 +29,7 @@ export async function GET() {
                 await sendEmail({
                     to: adminEmail!,
                     subject: `📖 Review Tomorrow's Story: ${existing.title}`,
-                    html: `
-                        <h2>Review Pending for ${dateStr}</h2>
-                        <h3>${existing.title}</h3>
-                        <p>This story was already generated but hasn't been approved yet.</p>
-                        <p>Click the link below to review and approve:</p>
-                        <a href="${reviewUrl}" style="display: inline-block; padding: 12px 24px; background: #4F46E5; color: white; text-decoration: none; border-radius: 6px;">Review Story</a>
-                    `,
+                    html: getAdminReviewEmailHtml(existing.title, reviewUrl, dateStr, true),
                 });
                 return NextResponse.json({ message: 'Resent email for existing draft', storyId: existing.id });
             }
@@ -40,7 +37,8 @@ export async function GET() {
         }
 
         // Generate story via AI
-        const prompt = "Write a story about a random creative theme (e.g. Nature, Space, Magic, Friendship). Length: 400 words.";
+        // We pass a simple instruction here because the System Prompt in lib/ai.ts now handles the random category selection.
+        const prompt = "Write a creative bedtime story based on the themes provided in the system instruction. Length: approx 400 words.";
         const aiResponse = await generateStory(prompt);
 
         // Save to DB
@@ -66,12 +64,7 @@ export async function GET() {
         await sendEmail({
             to: adminEmail!,
             subject: `📖 Review Tomorrow's Story: ${aiResponse.title}`,
-            html: `
-        <h2>New Story Generated for ${dateStr}</h2>
-        <h3>${aiResponse.title}</h3>
-        <p>Click the link below to review and approve:</p>
-        <a href="${reviewUrl}" style="display: inline-block; padding: 12px 24px; background: #4F46E5; color: white; text-decoration: none; border-radius: 6px;">Review Story</a>
-      `,
+            html: getAdminReviewEmailHtml(aiResponse.title, reviewUrl, dateStr, false),
         });
 
         return NextResponse.json({ message: 'Story generated successfully', storyId: story.id });
