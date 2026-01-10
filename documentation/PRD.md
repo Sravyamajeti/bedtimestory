@@ -14,9 +14,15 @@
 -   **Cadence:** Daily generation (Cron job).
 -   **Content:** Child-safe, calming, non-violent, appropriate for sleep.
 -   **Format:** Title, Summary Bullets, Full Story text, Generated Tags.
+-   **Randomness:** Programmatic selection of 2-3 random categories (from ~45 preset themes) per generation to ensure variety.
 
-### 3.2 Admin Review System
--   **Workflow:** generated stories are marked as `PENDING`.
+### 3.2 Admin Control & Review
+-   **Control Panel:** Dedicated page (`/admin/control`) for manual interventions.
+    -   **Manual Trigger:** Force generation of tomorrow's story immediately to bypass cron wait.
+    -   **Resend Approval:** Trigger email resend for pending drafts in case of delivery failure.
+    -   **Test Emails:** Send test "Welcome" and "Story" emails to verify templates.
+-   **Review System:** (Existing)
+    -   **Workflow:** generated stories are marked as `PENDING`.
 -   **Notification:** Admin receives an email with a "Review" link.
 -   **Interface:** Secure admin page to Edit Title, Content, and Tags.
 -   **Action:** Admin must explicitly `APPROVE` a story for it to be published.

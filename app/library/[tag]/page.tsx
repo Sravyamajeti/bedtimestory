@@ -8,36 +8,42 @@ import Link from 'next/link';
 // Revalidate frequently to show new stories immediately
 export const revalidate = 0;
 
-export const metadata = {
-    title: "Story Library",
-    description: "Browse our collection of free, AI-generated bedtime stories for kids. Short, calming tales for sleep.",
-    alternates: {
-        canonical: '/library',
-    },
-};
+
 
 interface LibraryPageProps {
-    searchParams: Promise<{ tag?: string }>;
+    params: Promise<{ tag: string }>;
 }
 
-export default async function LibraryPage({ searchParams }: LibraryPageProps) {
-    const { tag } = await searchParams;
+export async function generateMetadata({ params }: LibraryPageProps) {
+    const { tag } = await params;
+    const decodedTag = decodeURIComponent(tag);
+    return {
+        title: `Bedtime Stories about ${decodedTag} | Free Kids Stories`,
+        description: `Read free, AI-generated bedtime stories about ${decodedTag}. Short, calming tales for children aged 3-10.`,
+        alternates: {
+            canonical: `/library/${tag}`,
+        },
+    };
+}
+
+export default async function LibraryPage({ params }: LibraryPageProps) {
+    const { tag } = await params;
+    const decodedTag = decodeURIComponent(tag);
 
     let allStories;
 
     if (DEMO_MODE) {
+        // Mock Data Support
         allStories = await mockData.getStories();
-        // Mock data objects might not have 'id' property exactly as supabase (mock has _id), 
-        // but let's assume we map or use it compatible.
-        // Quick fix to map _id to id if needed, or ensuring mockData has id. 
-        // Looking at mockData.ts, it uses _id. We should map it.
+        // ... (mock data mapping logic remains if needed, but simplified for clarity)
         allStories = allStories.map((s: any) => ({
             ...s,
             id: s._id || s.id,
-            tags: s.tags || []
+            tags: s.tags || [],
+            slug: s.slug || s.id // Fallback
         }));
     } else {
-        // Fetch stories specifically with status 'SENT'
+        // Fetch stories with slugs
         const { data } = await supabase
             .from('stories')
             .select('id, title, date, summary_bullets, tags, slug')
@@ -47,13 +53,23 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         allStories = data;
     }
 
-    // Get unique tags
+    // Filter stories by tag
+    // Supabase query could be filtered server-side, but client-side filtering (in-memory) is fine for small scale
+    const stories = allStories?.filter(s => s.tags?.includes(decodedTag)) || [];
+
+    // Get unique tags for the filter bar (from ALL stories, or just display "All" + current?)
+    // Ideally we show related tags or all tags. Let's show all tags for navigation.
     const tags = Array.from(new Set(allStories?.flatMap(s => s.tags || []) || [])).sort();
 
-    // Filter stories
-    const stories = tag
-        ? allStories?.filter(s => s.tags?.includes(tag))
-        : allStories;
+    // Conditional Intro Text
+    const getIntroText = (t: string) => {
+        const lower = t.toLowerCase();
+        if (lower === 'nature' || lower === 'forests') return "Calming stories about forests, animals, and the outdoors.";
+        if (lower === 'space') return "Journey to the stars with these bedtime tales of the cosmos.";
+        if (lower === 'animals') return "Wonderful stories about furry friends and animal adventures.";
+        if (lower === 'magic') return "Tales of wizards, fairies, and wonder.";
+        return `Explore our collection of magical bedtime tales about ${t}.`;
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
@@ -61,18 +77,18 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
 
             <div className="container mx-auto px-4 pt-24 pb-16">
                 <header className="text-center mb-8">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                        📚 Story Library
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg capitalize">
+                        {decodedTag} Bedtime Stories
                     </h1>
                     <p className="text-lg text-purple-200 mb-8">
-                        Explore our collection of magical bedtime tales.
+                        {getIntroText(decodedTag)}
                     </p>
 
                     {/* Filter Bar */}
                     <div className="flex flex-wrap justify-center gap-2 mb-8">
                         <Link
                             href="/library"
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${!tag ? 'bg-white text-purple-900' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                            className="px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-white/10 text-white hover:bg-white/20"
                         >
                             All
                         </Link>
@@ -80,7 +96,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             <Link
                                 key={t}
                                 href={`/library/${encodeURIComponent(t)}`}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${tag === t ? 'bg-white text-purple-900' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${decodedTag === t ? 'bg-white text-purple-900' : 'bg-white/10 text-white hover:bg-white/20'}`}
                             >
                                 {t}
                             </Link>
@@ -97,7 +113,6 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             >
                                 <div className="mb-4">
                                     <div className="flex justify-between items-start mb-2">
-                                        {/* Date removed */}
                                         {story.tags && story.tags[0] && (
                                             <span className="text-[10px] bg-purple-500/30 px-2 py-0.5 rounded text-purple-100 border border-purple-400/30">
                                                 {story.tags[0]} {story.tags.length > 1 && `+${story.tags.length - 1}`}
@@ -123,6 +138,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                                         Read Story
                                     </Link>
                                 </div>
+
                             </div>
                         ))}
                     </div>

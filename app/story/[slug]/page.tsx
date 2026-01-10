@@ -8,28 +8,30 @@ import StickyHeader from '@/app/components/StickyHeader';
 export const dynamic = 'force-dynamic';
 
 interface StoryPageProps {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
-async function getStoryById(id: string) {
+async function getStoryBySlug(slug: string) {
     // Demo mode: use mock data
     if (DEMO_MODE) {
-        return await mockData.findStoryById(id);
+        // Fallback for demo: just return first story since mockData doesn't fully support slugs yet
+        const stories = await mockData.getStories();
+        return stories[0];
     }
 
     // Production mode: use Supabase
     const { data: story } = await supabase
         .from('stories')
         .select('*')
-        .eq('id', id)
+        .eq('slug', slug)
         .maybeSingle();
 
     return story;
 }
 
 export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
-    const { id } = await params;
-    const story = await getStoryById(id);
+    const { slug } = await params;
+    const story = await getStoryBySlug(slug);
 
     if (!story) return { title: 'Story Not Found' };
 
@@ -44,13 +46,16 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
             type: 'article',
             publishedTime: story.date,
             tags: story.tags,
+        },
+        alternates: {
+            canonical: `/story/${slug}`,
         }
     };
 }
 
 export default async function StoryPage({ params }: StoryPageProps) {
-    const { id } = await params;
-    const story = await getStoryById(id);
+    const { slug } = await params;
+    const story = await getStoryBySlug(slug);
 
     if (!story) {
         return (
@@ -161,8 +166,54 @@ export default async function StoryPage({ params }: StoryPageProps) {
                             </Link>
                         </div>
                     </div>
+
+                    {/* Related Stories */}
+                    {story.tags && story.tags.length > 0 && (
+                        <div className="mt-16">
+                            <h3 className="text-2xl font-bold text-white mb-6 text-center">More Stories Like This</h3>
+                            <RelatedStories currentStoryId={story.id} tags={story.tags} />
+                        </div>
+                    )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+async function RelatedStories({ currentStoryId, tags }: { currentStoryId: string, tags: string[] }) {
+    if (DEMO_MODE || !tags || tags.length === 0) return null;
+
+    // Fetch related stories (overlap in tags)
+    // Note: Supabase 'contains' operator on array column requires array input
+    const { data: stories } = await supabase
+        .from('stories')
+        .select('id, title, slug, summary_bullets, tags')
+        .contains('tags', [tags[0]]) // Filter by the first tag for simplicity
+        .neq('id', currentStoryId)
+        .limit(3);
+
+    if (!stories || stories.length === 0) return null;
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {stories.map((story) => (
+                <div key={story.id} className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-all">
+                    <h4 className="text-xl font-bold text-white mb-3 line-clamp-2">{story.title}</h4>
+                    <div className="text-purple-100 text-sm mb-4 line-clamp-3">
+                        <ul className="list-disc list-inside">
+                            {story.summary_bullets.slice(0, 1).map((bullet: string, i: number) => (
+                                <li key={i}>{bullet}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <Link
+                        href={`/story/${story.slug || story.id}`}
+                        className="inline-block w-full text-center py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors border border-white/20"
+                    >
+                        Read
+                    </Link>
+                </div>
+            ))}
         </div>
     );
 }

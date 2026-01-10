@@ -31,13 +31,20 @@ The core application relies on a single primary table in Supabase: `stories`.
 
 ### 4.1 Daily Story Generation (Cron)
 1.  **Trigger:** Vercel Cron (`vercel.json`) calls `/api/cron/generate-story`.
-2.  **Process:**
+2.  **Randomness Logic:** Code selects 2-3 random categories from a hardcoded list of ~45 themes (e.g., "Dinosaurs", "Space").
+3.  **Process:**
     -   Validates `CRON_SECRET`.
-    -   Calls OpenAI with a system prompt to generate a JSON story (title, summary, body, tags).
+    -   Calls OpenAI with a system prompt enforcing the selected categories as themes and tags.
     -   Inserts record into `stories` table with status `PENDING`.
     -   Sends email to `ADMIN_EMAIL` with a link to `/admin/review/[id]`.
 
-### 4.2 Admin Review
+### 4.2 Admin Control & Review
+**Admin Control Panel (`/admin/control`):**
+-   **API:** `/api/admin/trigger`
+-   **Security:** Protected via `x-admin-key` header (matched against `NEXT_PUBLIC_ADMIN_SECRET`).
+-   **Capabilities:** Manually trigger story generation, resend approval emails, send test emails.
+
+**Review Workflow:**
 1.  **Access:** Admin clicks the secret magic link (or navigates to `/admin/review/[id]`).
 2.  **Edit:** Admin can modify title, content, or tags using the UI form.
 3.  **Approve:** Clicking "Approve" updates status to `APPROVED`.

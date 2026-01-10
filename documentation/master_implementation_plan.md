@@ -25,7 +25,14 @@
 - [x] **Technical SEO**: `sitemap.xml` and `robots.txt` generation.
 - [x] **Content**: Added FAQ section to Library page for keywords.
 
-## Phase 5: Future Roadmap (Pending)
+## Phase 6: Admin Control & Randomness Improvements (Completed)
+- [x] **Admin Control Panel**: Interactive UI at `/admin/control` for manual overrides.
+- [x] **Manual Triggers**: API to force generation and resend emails via button click.
+- [x] **Category Randomness**: `lib/ai.ts` upgraded to pick 2-3 random categories from 45+ presets.
+- [x] **Tag Consistency**: Code enforces that selected categories become the final story tags.
+- [x] **Bug Fixes**: Solved Vercel timeout issues (60s limit) and stale production content (`revalidate = 0`).
+
+## Phase 7: Future Roadmap (Pending)
 - [ ] **User Accounts**: Allow parents to save "Favorite" stories.
 - [ ] **Audio Narration**: Text-to-speech for auto-narrated stories.
 - [ ] **Illustration Generation**: AI image generation for each story header.

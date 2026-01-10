@@ -11,7 +11,7 @@ const STORY_CATEGORIES = [
     'Vehicles', 'Inventions', 'Time Travel', 'Expeditions', 'Family & Home', 'Playgrounds',
     'Classrooms', 'Sports', 'Firefighters', 'Doctors', 'Helpful Neighbors', 'Toys',
     'Bizarre Physics', 'Arts', 'Colors', 'Dreams', 'Nighttime', 'Garden', 'Treehouses',
-    'Fortresses', 'Secret Hideouts', 'Exploration'
+    'Fortresses', 'Secret Hideouts', 'Exploration', 'Friendship'
 ];
 
 function getRandomCategories(count: number): string[] {
@@ -61,5 +61,20 @@ export async function generateStory(userPrompt: string) {
     // Explicitly assign the selected categories as the tags
     parsed.tags = selectedCategories;
 
+    // Generate slug from title
+    parsed.slug = slugify(parsed.title);
+
     return parsed;
+}
+
+function slugify(text: string): string {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')     // Replace spaces with -
+        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+        .replace(/\-\-+/g, '-')   // Replace multiple - with single -
+        .replace(/^-+/, '')       // Trim - from start of text
+        .replace(/-+$/, '');      // Trim - from end of text
 }
