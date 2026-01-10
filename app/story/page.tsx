@@ -49,9 +49,14 @@ export async function generateMetadata(): Promise<Metadata> {
             type: 'article',
             publishedTime: story.date,
             tags: story.tags,
+        },
+        alternates: {
+            canonical: `/story/${story.slug || story.id}`,
         }
     };
 }
+
+
 
 export default async function StoryPage() {
     const story = await getLatestStory();
@@ -150,8 +155,59 @@ export default async function StoryPage() {
                             </Link>
                         </div>
                     </div>
+
+                    {/* Related Stories */}
+                    {story.tags && story.tags.length > 0 && (
+                        <div className="mt-16">
+                            <h3 className="text-2xl font-bold text-white mb-6 text-center">More Stories Like This</h3>
+                            {/* We need to import or define RelatedStories here. Since it's not exported from [slug], we should duplicate or move it to a component. 
+                                For speed/simplicity, I will duplicate the simple fetch logic here or make a shared component.
+                                Actually, making a shared component is cleaner. 
+                                But I can't easily modify [slug] to export it without breaking things if I'm not careful.
+                                I'll create a new component file: app/components/RelatedStories.tsx
+                            */}
+                            <RelatedStories currentStoryId={story.id} tags={story.tags} />
+                        </div>
+                    )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+// Reuse the same component logic (duplicated for now to avoid refactoring risk at the end of task)
+async function RelatedStories({ currentStoryId, tags }: { currentStoryId: string, tags: string[] }) {
+    if (DEMO_MODE || !tags || tags.length === 0) return null;
+
+    const { data: stories } = await supabase
+        .from('stories')
+        .select('id, title, slug, summary_bullets, tags')
+        .contains('tags', [tags[0]])
+        .neq('id', currentStoryId)
+        .limit(3);
+
+    if (!stories || stories.length === 0) return null;
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {stories.map((story) => (
+                <div key={story.id} className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-all">
+                    <h4 className="text-xl font-bold text-white mb-3 line-clamp-2">{story.title}</h4>
+                    <div className="text-purple-100 text-sm mb-4 line-clamp-3">
+                        <ul className="list-disc list-inside">
+                            {story.summary_bullets.slice(0, 1).map((bullet: string, i: number) => (
+                                <li key={i}>{bullet}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <Link
+                        href={`/story/${story.slug || story.id}`}
+                        className="inline-block w-full text-center py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors border border-white/20"
+                    >
+                        Read
+                    </Link>
+                </div>
+            ))}
         </div>
     );
 }
