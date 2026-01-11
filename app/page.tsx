@@ -16,7 +16,7 @@ export default function LandingPage() {
             🌙 Bedtime Stories
           </h1>
           <p className="text-lg md:text-2xl text-purple-200 px-4">
-            Magical AI-generated tales delivered everyday
+            Magical AI-generated human curated tales delivered everyday
           </p>
         </header>
 
