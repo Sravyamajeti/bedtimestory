@@ -46,17 +46,28 @@ export async function GET() {
     }
 
     // Send to all subscribers
-    const emailPromises = subscribers.map((subscriber) => {
+    // Send to all subscribers sequentially with delay
+    let sentCount = 0;
+    let failCount = 0;
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    for (const subscriber of subscribers) {
       const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
 
-      return sendEmail({
-        to: subscriber.email,
-        subject: `🌙 Today's Bedtime Story: ${story.title}`,
-        html: getStoryEmailHtml(story, unsubscribeUrl),
-      });
-    });
-
-    await Promise.all(emailPromises);
+      try {
+        await sendEmail({
+          to: subscriber.email,
+          subject: `🌙 Today's Bedtime Story: ${story.title}`,
+          html: getStoryEmailHtml(story, unsubscribeUrl),
+        });
+        sentCount++;
+      } catch (err) {
+        console.error(`Failed to send to ${subscriber.email}:`, err);
+        failCount++;
+      }
+      // Wait 500ms to respect rate limits
+      await delay(500);
+    }
 
     // Update story status to SENT
     await supabase

@@ -91,6 +91,52 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: `Approval email resent for "${story.title}"` });
         }
 
+        // 4. Manual Broadcast (Proxies to specific route logic or implements it here)
+        // Since we created api/admin/distribute/route.ts, let's keep logic there and just error if called here, 
+        // OR better: Update the Frontend to call the new route.
+        // But wait, the Frontend creates a `triggerApi` helper that posts to `/api/admin/trigger`.
+        // Let's add the logic here to keep it consistent with the helper.
+
+        if (action === 'distribute') {
+            // For consistency/DRY, we'll re-implement the simplified call here, 
+            // but actually it is better to have one source of truth.
+            // We will redirect/rewrite logic here or just import the handler?
+            // Next.js API routes are independent. 
+            // Let's just implement the logic here cleanly.
+
+            // Get today's story
+            const today = new Date().toISOString().split('T')[0];
+            const { data: story } = await supabase.from('stories').select('*').eq('date', today).maybeSingle();
+
+            if (!story) return NextResponse.json({ error: 'No story found for today' }, { status: 404 });
+            if (story.status !== 'APPROVED' && story.status !== 'SENT') return NextResponse.json({ error: 'Story must be APPROVED' }, { status: 400 });
+
+            const { data: subscribers } = await supabase.from('subscribers').select('email').eq('is_active', true);
+            if (!subscribers?.length) return NextResponse.json({ message: 'No active subscribers' });
+
+            // Sequential send
+            let sent = 0;
+            const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+            for (const sub of subscribers) {
+                const unsub = `${process.env.NEXT_PUBLIC_APP_URL}/api/unsubscribe?email=${encodeURIComponent(sub.email)}`;
+                try {
+                    await sendEmail({
+                        to: sub.email,
+                        subject: `🌙 Today's Bedtime Story: ${story.title}`,
+                        html: getStoryEmailHtml(story, unsub)
+                    });
+                    sent++;
+                } catch (e) {
+                    console.error(`Broadcast fail for ${sub.email}`, e);
+                }
+                await delay(500);
+            }
+
+            await supabase.from('stories').update({ status: 'SENT' }).eq('id', story.id);
+            return NextResponse.json({ message: `Broadcasted to ${sent}/${subscribers.length} subscribers` });
+        }
+
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
     } catch (error) {

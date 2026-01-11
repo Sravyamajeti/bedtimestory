@@ -150,8 +150,33 @@ export default function AdminControlPage() {
                             </button>
                         </div>
                     </div>
-
                 </div>
+
+                {/* DANGER ZONE: Broadcast */}
+                <div className="bg-white p-8 rounded-xl shadow-sm border-2 border-red-100 col-span-1 md:col-span-2">
+                    <h2 className="text-xl font-bold mb-6 text-red-800 border-b border-red-100 pb-2">Emergency Broadcast</h2>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="font-semibold text-gray-800 mb-1">Broadcast To All Subscribers</h3>
+                            <p className="text-sm text-gray-500">
+                                Manually triggers the distribution of <strong>Today's Story</strong> to ALL active subscribers.<br />
+                                Use this ONLY if the automated 6 AM schedule failed.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                if (window.confirm("ARE YOU SURE?\n\nThis will send emails to ALL subscribers immediately.")) {
+                                    performAction('broadcast', () => triggerApi('distribute'));
+                                }
+                            }}
+                            disabled={!!loading || !key}
+                            className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-200"
+                        >
+                            {loading === 'broadcast' ? 'Broadcasting...' : 'BROADCAST NOW'}
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

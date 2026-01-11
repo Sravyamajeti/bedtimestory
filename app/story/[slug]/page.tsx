@@ -20,11 +20,18 @@ async function getStoryBySlug(slug: string) {
     }
 
     // Production mode: use Supabase
-    const { data: story } = await supabase
-        .from('stories')
-        .select('*')
-        .eq('slug', slug)
-        .maybeSingle();
+    // Check if the "slug" is actually a UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+    let query = supabase.from('stories').select('*');
+
+    if (isUuid) {
+        query = query.eq('id', slug);
+    } else {
+        query = query.eq('slug', slug);
+    }
+
+    const { data: story } = await query.maybeSingle();
 
     return story;
 }
