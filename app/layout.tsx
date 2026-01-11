@@ -4,14 +4,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL('https://bedtimestories.productmama.dev'),
   title: {
-    default: "Bedtime Stories - Magical AI-Generated Tales",
+    default: "Bedtime Stories - Magical AI-Generated Human Curated Tales",
     template: "%s | Bedtime Stories"
   },
   description: "Receive a new, calming bedtime story every day for your children. Free AI-generated short stories for sleep.",
   keywords: ["bedtime stories", "short stories for kids", "AI story generator", "stories for sleep", "children's books"],
   authors: [{ name: "Sravyamajeti" }],
   openGraph: {
-    title: "Bedtime Stories - Magical AI-Generated Tales",
+    title: "Bedtime Stories - Magical AI-Generated Human Curated Tales",
     description: "Receive a new, calming bedtime story every day for your children.",
     url: 'https://bedtimestories.productmama.dev',
     siteName: 'Bedtime Stories',
