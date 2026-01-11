@@ -64,11 +64,59 @@ export default async function LibraryPage({ params }: LibraryPageProps) {
     // Conditional Intro Text
     const getIntroText = (t: string) => {
         const lower = t.toLowerCase();
-        if (lower === 'nature' || lower === 'forests') return "Calming stories about forests, animals, and the outdoors.";
-        if (lower === 'space') return "Journey to the stars with these bedtime tales of the cosmos.";
-        if (lower === 'animals') return "Wonderful stories about furry friends and animal adventures.";
-        if (lower === 'magic') return "Tales of wizards, fairies, and wonder.";
-        return `Explore our collection of magical bedtime tales about ${t}.`;
+
+        if (lower.includes('nature') || lower.includes('forest')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Immerse your child in the soothing sounds of the natural world with our <strong className="text-pink-200">nature bedtime stories</strong>. These tales take young readers on gentle journeys through whispering forests, sun-dappled meadows, and bubbling brooks, helping them connect with the beauty of the outdoors from the comfort of their bed.</span>
+                    <span className="block">Perfect for calming active minds, our nature stories often feature friendly woodland creatures and the changing seasons. The slow, rhythmic descriptions of rustling leaves and swaying trees act as a natural lullaby, making these <strong className="text-pink-200">calming stories for sleep</strong> an excellent choice for a peaceful night's rest.</span>
+                </span>
+            );
+        }
+
+        if (lower.includes('space') || lower.includes('star') || lower.includes('moon')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Blast off into a universe of dreams with our collection of <strong className="text-pink-200">space bedtime stories for kids</strong>. Your little astronaut will drift among twinkling stars, friendly planets, and glowing comets, exploring the wonders of the cosmos in a way that sparks imagination without being too exciting for bedtime.</span>
+                    <span className="block">These cosmic tales often focus on the quiet beauty of the night sky, helping children feel safe and comfortable in the dark. Whether it's a story about a sleepy moon or a star looking for a friend, our <strong className="text-pink-200">astronomy stories for children</strong> are designed to turn the vastness of space into a cozy blanket for sleep.</span>
+                </span>
+            );
+        }
+
+        if (lower.includes('animal') || lower.includes('pet') || lower.includes('cat') || lower.includes('dog')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Who doesn't love a furry friend? Our <strong className="text-pink-200">short animal stories for kids</strong> feature lovable characters that children can easily relate to. From brave puppies to wise old owls, these animal adventures teach important life lessons about kindness, empathy, and understanding others.</span>
+                    <span className="block">Animals are a timeless favorite for bedtime because they offer comfort and companionship. Our collection includes both domestic pets and wild creatures, all behaving in gentle, friendly ways. Reading these <strong className="text-pink-200">animal tales for toddlers</strong> is a sure way to end the day with a smile and a warm feeling in your heart.</span>
+                </span>
+            );
+        }
+
+        if (lower.includes('magic') || lower.includes('fairy') || lower.includes('wizard') || lower.includes('dragon')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Step into a world where anything is possible with our <strong className="text-pink-200">magical bedtime stories</strong>. In these enchanted realms, fairies flutter, friendly dragons soar, and wizards cast spells of sleep and sweet dreams. Magic sparks a child's creativity and helps them visualize wonderful places as they close their eyes.</span>
+                    <span className="block">Our fantasy stories strike a careful balance—they are full of wonder but free from scary monsters or intense conflict. Instead, they focus on the magic of kindness and discovery. Let your child's imagination take flight with these <strong className="text-pink-200">fantasy stories for kids</strong>, creating a bridge between their day and the dream world.</span>
+                </span>
+            );
+        }
+
+        if (lower.includes('friendship') || lower.includes('kindness')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Friendship is one of the first and most important lessons a child learns. Our <strong className="text-pink-200">stories about friendship</strong> celebrate the bonds between best friends, whether they are children, animals, or magical beings. These tales model sharing, caring, and working together to solve simple problems.</span>
+                    <span className="block">Ending the day with a story about connection and love helps children feel secure and valued. These <strong className="text-pink-200">social-emotional stories</strong> reassure little ones that they are not alone and that kindness is a superpower. It's the perfect positive note to end the day on before drifting off to sleep.</span>
+                </span>
+            );
+        }
+
+        // Fallback for other tags
+        return (
+            <span className="block space-y-4">
+                <span className="block">Explore our unique collection of <strong className="text-pink-200">{t} bedtime stories</strong>. Every child has different interests, and we believe in checking every box to find the story that captures their heart. Reading about a favorite topic helps engage reluctant readers and makes bedtime a specialized treat.</span>
+                <span className="block">Like all our tales, these stories are crafted to be short, soothing, and safe for young children. Whether you're looking for something educational or just plain fun, these <strong className="text-pink-200">free stories for kids</strong> are ready to be part of your nightly routine.</span>
+            </span>
+        );
     };
 
     return (

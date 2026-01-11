@@ -45,11 +45,16 @@ export default async function CategoriesPage() {
             <div className="container mx-auto px-4 pt-24 pb-16">
                 <header className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">
-                        Explore Categories
+                        Explore Bedtime Stories for Kids
                     </h1>
-                    <p className="text-xl text-purple-200">
-                        Find the perfect story for tonight's dream.
-                    </p>
+                    <div className="max-w-3xl mx-auto space-y-4 text-lg text-purple-100 leading-relaxed">
+                        <p>
+                            Welcome to our magical library of <strong className="text-pink-200">bedtime stories for kids</strong>, organized by themes to help you find the perfect tale for tonight. Whether your child dreams of <strong className="text-pink-200">space adventures</strong>, enchanted forests, or friendly animals, we have a story to spark their imagination and help them drift off to sleep.
+                        </p>
+                        <p>
+                            Reading <strong className="text-pink-200">short stories for sleep</strong> is a wonderful way to bond with your children and settle them down after a busy day. Our collection includes <strong className="text-pink-200">moral stories</strong> that teach valuable lessons about kindness, friendship, and courage, all wrapped in gentle narratives designed to be calming and soothing.
+                        </p>
+                    </div>
                 </header>
 
                 {uniqueTags.length > 0 ? (
