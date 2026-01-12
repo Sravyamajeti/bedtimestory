@@ -8,10 +8,22 @@ export const maxDuration = 60; // Allow up to 60 seconds for AI generation
 
 export async function GET() {
     try {
-        // Calculate tomorrow's date (YYYY-MM-DD)
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const dateStr = tomorrow.toISOString().split('T')[0];
+        // Calculate target date (robust against midnight crossing)
+        // If running at 20:00 UTC (intended), it's "today" -> target "tomorrow".
+        // If running at 00:41 UTC (delayed), it's already "tomorrow" -> target "today" (which is same date).
+        const now = new Date();
+        const hour = now.getUTCHours();
+        const targetDate = new Date(now);
+
+        // If it's effectively the "previous day's night" (late UTC), add 1 day.
+        // If it's "early morning" (post-midnight UTC), it's already the target date.
+        // Threshold: 12:00 UTC. (Cron is 20:00).
+        if (hour >= 12) {
+            targetDate.setDate(targetDate.getDate() + 1);
+        }
+        // else: leave as is (targetDate is already the correct 'next' day)
+
+        const dateStr = targetDate.toISOString().split('T')[0];
 
         // Check if story already exists for tomorrow
         const { data: existing } = await supabase
