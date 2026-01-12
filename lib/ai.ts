@@ -5,12 +5,12 @@ const openai = new OpenAI({
 });
 
 const STORY_CATEGORIES = [
-    'Forests', 'Mountains', 'Animals', 'Space', 'Oceans', 'Beach', 'Vacations', 'Kids',
+    'Nature', 'Animals', 'Space', 'Oceans', 'Beach', 'Vacations', 'Kids',
     'Weather', 'Dinosaurs', 'Magic', 'Dragons', 'Unicorns', 'Mermaids', 'Castles',
     'Knights', 'Princess', 'Fairies', 'Gnomes', 'Lilliputs', 'Giants', 'Superpowers',
     'Vehicles', 'Inventions', 'Time Travel', 'Expeditions', 'Family & Home', 'Playgrounds',
     'Classrooms', 'Sports', 'Firefighters', 'Doctors', 'Helpful Neighbors', 'Toys',
-    'Bizarre Physics', 'Arts', 'Colors', 'Dreams', 'Nighttime', 'Garden', 'Treehouses',
+    'Bizarre Physics', 'Arts', 'Colors', 'Dreams', 'Nighttime', 'Treehouses',
     'Fortresses', 'Secret Hideouts', 'Exploration', 'Friendship'
 ];
 
@@ -28,7 +28,7 @@ export async function generateStory(userPrompt: string) {
 
     const systemPrompt = `You are a professional children's book author. Write creative, calming, and engaging bedtime stories for ages 5-10. 
     
-    CORE TASK: Write a story that creatively combines these specific themes: [${categoryString}].
+    CORE TASK: Dont make the story mystical or magical unless explicitly asked. Write a story that creatively combines these specific themes: [${categoryString}].
     
     Always return valid JSON with: 
     - title: String
