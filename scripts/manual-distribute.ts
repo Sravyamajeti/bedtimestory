@@ -63,7 +63,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 async function manualDistribute() {
     console.log('🚀 Starting Manual Distribution...');
 
-    const today = '2026-01-13'; // Targeting the APPROVED story
+    const today = new Date().toISOString().split('T')[0];
     console.log(`Target Date: ${today}`);
 
     // 1. Find story
