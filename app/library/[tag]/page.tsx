@@ -135,6 +135,36 @@ export default async function LibraryPage({ params }: LibraryPageProps) {
             );
         }
 
+        // Princess & Royalty
+        if (lower.includes('princess') || lower.includes('queen') || lower.includes('prince') || lower.includes('royal') || lower.includes('castle')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Enter a world of elegance and courage with our <strong className="text-pink-200">princess bedtime stories</strong>. Whether it's a brave princess solving a kingdom's problem or a kind prince making a new friend, these tales are filled with royal wonder and grace.</span>
+                    <span className="block">Our <strong className="text-pink-200">stories about royalty</strong> go beyond the crown, focusing on leadership, kindness, and being true to oneself. These gentle adventures in sparkling castles and blooming gardens are the perfect way to invite sweet, majestic dreams.</span>
+                </span>
+            );
+        }
+
+        // Inventions & Science
+        if (lower.includes('invention') || lower.includes('robot') || lower.includes('science') || lower.includes('gadget') || lower.includes('build')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Spark your little one's curiosity with our <strong className="text-pink-200">stories about inventions</strong>. Watch as clever characters build helpful robots, design flying machines, or discover new ways to make the world better. These tales celebrate creativity and the joy of figuring things out.</span>
+                    <span className="block">Perfect for budding engineers, our <strong className="text-pink-200">science bedtime stories</strong> combine learning with imagination. They show that even the biggest ideas start with a dream, encouraging your child to close their eyes and imagine what they might create tomorrow.</span>
+                </span>
+            );
+        }
+
+        // Classrooms & School
+        if (lower.includes('classroom') || lower.includes('school') || lower.includes('teacher') || lower.includes('learn')) {
+            return (
+                <span className="block space-y-4">
+                    <span className="block">Open the book on learning and fun with our <strong className="text-pink-200">classroom stories for kids</strong>. From the excitement of the first day to the magic of a show-and-tell, these tales capture the friendly and welcoming spirit of school.</span>
+                    <span className="block">Our <strong className="text-pink-200">stories about school</strong> focus on friendship, curiosity, and the joy of discovering new things. They are perfect for settling down after a busy school day or for comforting little ones, reminding them that learning is a wonderful adventure.</span>
+                </span>
+            );
+        }
+
         // Fallback for other tags
         return (
             <span className="block space-y-4">

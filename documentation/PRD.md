@@ -17,7 +17,7 @@
 -   **Randomness:** Programmatic selection of 2-3 random categories (from ~45 preset themes) per generation to ensure variety.
 
 ### 3.2 Admin Control & Review
--   **Control Panel:** Dedicated page (`/admin/control`) for manual interventions.
+-   **Control Panel:** Dedicated page for manual interventions.
     -   **Manual Trigger:** Force generation of tomorrow's story immediately to bypass cron wait.
     -   **Resend Approval:** Trigger email resend for pending drafts in case of delivery failure.
     -   **Test Emails:** Send test "Welcome" and "Story" emails to verify templates.
