@@ -3,6 +3,7 @@ import { mockData } from '@/lib/mockData';
 import StickyHeader from '@/app/components/StickyHeader';
 import Footer from '@/app/components/Footer';
 import SubscribeForm from '@/app/components/SubscribeForm';
+import FAQ from '@/app/components/FAQ';
 import Link from 'next/link';
 
 // Revalidate frequently to show new stories immediately
@@ -141,23 +142,20 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 </div>
 
                 {/* FAQ Section */}
-                <div className="max-w-3xl mx-auto mb-16 text-white">
-                    <h2 className="text-3xl font-bold text-center mb-8 drop-shadow-md">Frequently Asked Questions</h2>
-                    <div className="space-y-6">
-                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-xl font-bold mb-2">Are these bedtime stories free to read?</h3>
-                            <p className="text-purple-100">Yes, all our <em className="text-pink-200">short bedtime stories for kids</em> are completely free to read online. Our library is updated daily with new <em className="text-pink-200">AI-generated tales</em>.</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-xl font-bold mb-2">How does the AI story generator work?</h3>
-                            <p className="text-purple-100">Our <em className="text-pink-200">AI story generator</em> creates unique, child-safe tales every night. Each story is human-reviewed to ensure it's perfect for a peaceful night's sleep.</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
-                            <h3 className="text-xl font-bold mb-2">What age group are these stories for?</h3>
-                            <p className="text-purple-100">Our stories are written to be calm and engaging for children aged 3-10. They make excellent <em className="text-pink-200">short stories for sleep</em> and quiet time.</p>
-                        </div>
-                    </div>
-                </div>
+                <FAQ items={[
+                    {
+                        question: "Are the stories in the library free to read?",
+                        answer: "Yes! All the short bedtime stories in our library are completely free to read online. You don't need a paid subscription to browse or read past tales."
+                    },
+                    {
+                        question: "How often is the library updated?",
+                        answer: "The library grows every single day! As soon as a new daily story is released, it is added to our permanent collection here, so you never miss a magical moment."
+                    },
+                    {
+                        question: "How do I find a story my child will like?",
+                        answer: "You can easily browse by category tags at the top of the page, such as Magic, Space, Princess, or Animals. Whether your child loves artistic adventures or forest friends, there's a story waiting for them."
+                    }
+                ]} />
 
                 <Footer />
             </div>

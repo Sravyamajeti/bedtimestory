@@ -3,6 +3,26 @@
 import StickyHeader from './components/StickyHeader';
 import SubscribeForm from './components/SubscribeForm';
 import Footer from './components/Footer';
+import FAQ from './components/FAQ';
+
+const landingFAQs = [
+  {
+    question: "How does Bedtime Stories work?",
+    answer: "It's simple magic! Every day, our AI generates a brand new, calming bedtime story. We human-vet it for safety and quality, and then deliver it straight to your inbox, so you have a fresh tale ready for bedtime every single night."
+  },
+  {
+    question: "Are the stories safe for children?",
+    answer: "Absolutely. Safety is our top priority. While we use AI to spark creativity, every single story is reviewed by a real human before it is published. We ensure there are no scary surprises, inappropriate themes, or complex language—just sweet, calming dreams."
+  },
+  {
+    question: "How much does it cost to subscribe?",
+    answer: "We offer a free tier that gives you access to our daily story. You can subscribe to get these magical tales delivered directly to your email inbox every day."
+  },
+  {
+    question: "Can I customize the stories?",
+    answer: "Currently, we curate a single, perfect story for everyone each day to save you time. However, we are always working on new features, so stay tuned for future personalization options!"
+  }
+];
 
 export default function LandingPage() {
   return (
@@ -77,9 +97,13 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Landing Page FAQ */}
+        <FAQ items={landingFAQs} />
+
         {/* Footer */}
         <Footer />
       </div>
     </div>
   );
 }
+
