@@ -33,6 +33,12 @@ export default function StickyHeader() {
                         Library
                     </Link>
                     <Link
+                        href="/blog"
+                        className="text-white/80 hover:text-white font-medium text-sm md:text-base transition-colors"
+                    >
+                        Blog
+                    </Link>
+                    <Link
                         href="/story"
                         className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm md:text-base font-bold rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-md"
                     >

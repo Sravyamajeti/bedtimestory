@@ -6,6 +6,7 @@ export default function Footer() {
             <div className="flex justify-center gap-6 mb-4">
                 <Link href="/" className="hover:text-white transition-colors">Home</Link>
                 <Link href="/library" className="hover:text-white transition-colors">Story Library</Link>
+                <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
                 <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
             </div>
             <p>Made with ❤️ by MOM</p>

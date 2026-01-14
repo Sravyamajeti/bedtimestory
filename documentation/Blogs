@@ -1,0 +1,32 @@
+A. Blog Landing Page (/blog)
+Hero Section: Latest post with large image.
+
+Search Bar: Real-time or "on enter" search filtering posts by Title. (go with easiest approach)
+
+Category Filter: Horizontal pill-buttons or dropdown to filter posts (e.g., "All", "Stories", "Tips").
+
+Post Grid/List:
+
+Cards displaying: Featured Image, Title, Category, Author Name, Publish Date, and Description snippet.
+
+Pagination or "Load More" button (Limit 9-12 posts per view).
+
+B. Single Blog Post Page (/blog/:slug)
+Header: Title, Author (Avatar + Name), Publish Date, Category.
+
+Featured Image: Large banner image.
+
+Content Body: Renders rich text (HTML/Markdown) with proper styling for mobile readability.
+
+Related Blogs:
+
+Logic: Show 3 recent posts from the same category.
+
+UI: Small grid at the bottom of the article.
+
+3.2 Navigation Changes
+Main Menu: Add "Blog" link to the header navigation.
+
+Footer: Add "Blog" link to the site map.
+
+All blog pages should be SEO optimised
