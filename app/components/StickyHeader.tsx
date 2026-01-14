@@ -1,10 +1,28 @@
+'use client';
+
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export default function StickyHeader() {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 10) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <div className="fixed top-0 left-0 right-0 z-50 px-4 py-3 bg-indigo-900/80 backdrop-blur-md border-b border-white/10 shadow-lg">
+        <div className={`fixed top-0 left-0 right-0 z-50 px-4 py-3 transition-all duration-300 ${isScrolled ? 'bg-indigo-900/90 backdrop-blur-md border-b border-white/10 shadow-lg' : 'bg-transparent'}`}>
             <div className="container mx-auto flex items-center justify-between">
-                <Link href="/" className="text-white font-bold text-lg md:text-xl shadow-sm hover:text-purple-200 transition-colors">
+                <Link href="/" className="text-white font-bold text-lg md:text-xl hover:text-purple-200 transition-colors">
                     🌙 Bedtime Stories
                 </Link>
                 <div className="flex items-center gap-4">
