@@ -11,7 +11,8 @@ const STORY_CATEGORIES = [
     'Vehicles', 'Inventions', 'Time Travel', 'Expeditions', 'Family & Home', 'Playgrounds',
     'Classrooms', 'Sports', 'Firefighters', 'Doctors', 'Helpful Neighbors', 'Toys',
     'Bizarre Physics', 'Arts', 'Colors', 'Dreams', 'Nighttime', 'Treehouses',
-    'Fortresses', 'Secret Hideouts', 'Exploration', 'Friendship'
+    'Secret Hideouts', 'Exploration', 'Friendship', 'Plumber', 'Electrician', 'Baker', 'Goldsmith',
+    'Teacher', 'Author', 'Music', 'Farmer', 'Tour Guide', 'Carpenter', 'Mechanic'
 ];
 
 function getRandomCategories(count: number): string[] {
