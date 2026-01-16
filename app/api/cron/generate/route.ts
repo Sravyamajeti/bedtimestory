@@ -63,6 +63,7 @@ export async function GET() {
                 summary_bullets: aiResponse.summary_bullets,
                 content: aiResponse.content,
                 tags: aiResponse.tags || [], // New field
+                slug: aiResponse.slug,
             }])
             .select()
             .single();
