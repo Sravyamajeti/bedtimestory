@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export const maxDuration = 60; // Allow up to 60 seconds
 
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
     try {
         // 1. Fetch stories with NULL slugs
-        const { data: stories, error: fetchError } = await supabase
+        const { data: stories, error: fetchError } = await supabaseAdmin
             .from('stories')
             .select('id, title')
             .is('slug', null);
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 
             const newSlug = slugify(story.title);
 
-            const { error: updateError } = await supabase
+            const { error: updateError } = await supabaseAdmin
                 .from('stories')
                 .update({ slug: newSlug })
                 .eq('id', story.id);
