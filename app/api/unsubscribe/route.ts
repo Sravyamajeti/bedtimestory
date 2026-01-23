@@ -17,6 +17,24 @@ export async function GET(request: Request) {
 
     if (error) throw error;
 
+    // Track metrics
+    const today = new Date().toISOString().split('T')[0];
+    const emailType = searchParams.get('type') || 'subscriber'; // default or passed param
+
+    // Increment unsubscribe_count (similar logic to webhook)
+    const { data: existingMetric } = await supabase
+      .from('email_metrics')
+      .select('*')
+      .eq('date', today)
+      .eq('email_type', emailType)
+      .maybeSingle();
+
+    if (existingMetric) {
+      await supabase.from('email_metrics').update({ unsubscribe_count: existingMetric.unsubscribe_count + 1 }).eq('date', today).eq('email_type', emailType);
+    } else {
+      await supabase.from('email_metrics').insert({ date: today, email_type: emailType, unsubscribe_count: 1 });
+    }
+
     return new NextResponse(`
       <html>
         <head><title>Unsubscribed</title></head>
