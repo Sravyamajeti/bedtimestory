@@ -29,7 +29,7 @@ export async function generateStory(userPrompt: string) {
 
     const systemPrompt = `You are a professional children's book author. Write creative, calming, and engaging bedtime stories for ages 5-10. 
     
-    CORE TASK: Dont make the story mystical or magical unless explicitly asked. Write a story that creatively combines these specific themes: [${categoryString}].
+    CORE TASK: Dont make the story mystical or magical unless explicitly asked. Story should be practical. Dont make it about packing bags and going for adventure. Write a story that creatively combines these specific themes: [${categoryString}].
     
     Always return valid JSON with: 
     - title: String
