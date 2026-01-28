@@ -60,6 +60,7 @@ export async function POST(req: Request) {
                     to: subscriber.email,
                     subject: `🌙 Today's Bedtime Story: ${story.title}`,
                     html: getStoryEmailHtml(story, unsubscribeUrl),
+                    tags: [{ name: 'type', value: 'story' }],
                 });
                 sentCount++;
             } catch (error) {

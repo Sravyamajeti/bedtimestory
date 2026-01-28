@@ -28,7 +28,8 @@ export async function POST(request: Request) {
             await sendEmail({
                 to: email,
                 subject: '🌙 Welcome to Bedtime Stories! (Test)',
-                html: getWelcomeEmailHtml(unsubscribeUrl)
+                html: getWelcomeEmailHtml(unsubscribeUrl),
+                tags: [{ name: 'type', value: 'welcome' }]
             });
 
             return NextResponse.json({ message: `Welcome email sent to ${email}` });
@@ -55,7 +56,8 @@ export async function POST(request: Request) {
             await sendEmail({
                 to: email,
                 subject: `🌙 Today's Bedtime Story: ${story.title} (Test)`,
-                html: getStoryEmailHtml(story, unsubscribeUrl)
+                html: getStoryEmailHtml(story, unsubscribeUrl),
+                tags: [{ name: 'type', value: 'story' }]
             });
 
             return NextResponse.json({ message: `Story email sent to ${email}` });
@@ -85,7 +87,8 @@ export async function POST(request: Request) {
             await sendEmail({
                 to: adminEmail,
                 subject: `📖 Review Story: ${story.title} (Resend)`,
-                html: getAdminReviewEmailHtml(story.title, reviewUrl, story.date, true)
+                html: getAdminReviewEmailHtml(story.title, reviewUrl, story.date, true),
+                tags: [{ name: 'type', value: 'admin_approval' }]
             });
 
             return NextResponse.json({ message: `Approval email resent for "${story.title}"` });
@@ -124,7 +127,8 @@ export async function POST(request: Request) {
                     await sendEmail({
                         to: sub.email,
                         subject: `🌙 Today's Bedtime Story: ${story.title}`,
-                        html: getStoryEmailHtml(story, unsub)
+                        html: getStoryEmailHtml(story, unsub),
+                        tags: [{ name: 'type', value: 'story' }]
                     });
                     sent++;
                 } catch (e) {

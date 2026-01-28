@@ -1,73 +1,122 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
     try {
-        const payload = await req.json();
+        // Step 1: Parse payload with error handling
+        let payload;
+        try {
+            payload = await req.json();
+        } catch (parseError) {
+            console.error('[Webhook] JSON Parse Error:', parseError);
+            return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
+        }
+
         const { type, data } = payload;
 
-        // We typically expect data.tags to contain our metadata
-        // tags: [ { name: 'type', value: 'story' } ]
-        const tags = data.tags || [];
-        const emailTypeTag = tags.find((t: any) => t.name === 'type');
-        const emailType = emailTypeTag ? emailTypeTag.value : 'unknown'; // specific fallback logic can be added
+        if (!type || !data) {
+            console.error('[Webhook] Missing type or data in payload');
+            return NextResponse.json({ error: 'Invalid payload structure' }, { status: 400 });
+        }
 
-        // We only care about specific events
+        console.log(`[Webhook] Received event: ${type}`);
+
+        // Step 2: Validate environment variables
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+        console.log('[Webhook] Env check - URL exists:', !!supabaseUrl);
+        console.log('[Webhook] Env check - Key exists:', !!supabaseServiceKey);
+
+        if (!supabaseUrl || !supabaseServiceKey) {
+            console.error('[Webhook] Missing Supabase credentials');
+            console.error('[Webhook] URL:', supabaseUrl ? 'SET' : 'MISSING');
+            console.error('[Webhook] Key:', supabaseServiceKey ? 'SET' : 'MISSING');
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
+
+        // Step 3: Create Supabase client with error handling
+        let supabaseAdmin;
+        try {
+            supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+            console.log('[Webhook] Supabase client created successfully');
+        } catch (clientError) {
+            console.error('[Webhook] Supabase Client Creation Error:', clientError);
+            return NextResponse.json({ error: 'Database connection error' }, { status: 500 });
+        }
+
+        // Step 4: Extract email type from tags
+        const tags = data.tags || [];
+        const emailTypeTag = tags.find((t: any) => t?.name === 'type');
+        const emailType = emailTypeTag?.value || 'unknown';
+
+        console.log(`[Webhook] Email Type: ${emailType}, Tags:`, tags);
+
+        // Step 5: Validate event type
         const validEvents = [
             'email.sent', 'email.delivered', 'email.opened',
             'email.failed', 'email.bounced', 'email.clicked', 'email.received'
         ];
+
         if (!validEvents.includes(type)) {
+            console.log(`[Webhook] Event type '${type}' ignored (not in valid events)`);
             return NextResponse.json({ message: 'Event ignored' }, { status: 200 });
         }
 
+        // Step 6: Determine column to increment
+        const columnMap: Record<string, string> = {
+            'email.sent': 'sent_count',
+            'email.delivered': 'delivered_count',
+            'email.opened': 'opened_count',
+            'email.failed': 'failed_count',
+            'email.bounced': 'bounced_count',
+            'email.clicked': 'clicked_count',
+            'email.received': 'received_count'
+        };
+
+        const columnToIncrement = columnMap[type];
         const today = new Date().toISOString().split('T')[0];
 
-        // Determine column to increment
-        let columnToIncrement = '';
-        if (type === 'email.sent') columnToIncrement = 'sent_count';
-        if (type === 'email.delivered') columnToIncrement = 'delivered_count';
-        if (type === 'email.opened') columnToIncrement = 'opened_count';
-        if (type === 'email.failed') columnToIncrement = 'failed_count';
-        if (type === 'email.bounced') columnToIncrement = 'bounced_count';
-        if (type === 'email.clicked') columnToIncrement = 'clicked_count';
-        if (type === 'email.received') columnToIncrement = 'received_count';
+        console.log(`[Webhook] Will increment '${columnToIncrement}' for date ${today}, email_type ${emailType}`);
 
-        // We can't easily doing an UPSERT with increment in one simple standard SQL command via simple Supabase JS client 
-        // without a stored procedure or manual read-modify-write, 
-        // BUT we can use an RPC or just try to insert ignore and then update.
-        // simpler approach: READ currently, then Update/Insert. 
-        // Better concurrent approach: RPC. 
-        // Let's stick to standard Supabase upsert for simplicity first, or RPC if we want atomicity.
-        // Given the scale, read-modify-write might have race conditions.
-        // A raw SQL query or RPC is best for atomic increments.
-        // Let's try to use an RPC later if needed, but for now, simple read/write.
-        // Actually, we can assume low concurrency for a personal project.
-
-        // Check if row exists
-        const { data: existingData, error: selectError } = await supabase
+        // Step 7: Check if row exists
+        const { data: existingData, error: selectError } = await supabaseAdmin
             .from('email_metrics')
             .select('*')
             .eq('date', today)
             .eq('email_type', emailType)
             .maybeSingle();
 
-        if (selectError) throw selectError;
+        if (selectError) {
+            console.error('[Webhook] Select Error:', JSON.stringify(selectError, null, 2));
+            return NextResponse.json({
+                error: 'Database query error',
+                details: selectError.message
+            }, { status: 500 });
+        }
 
+        // Step 8: Update or Insert
         if (existingData) {
-            // Update
+            console.log('[Webhook] Existing record found, updating...');
             const updateData: any = {};
-            updateData[columnToIncrement] = existingData[columnToIncrement] + 1;
+            updateData[columnToIncrement] = (existingData[columnToIncrement] || 0) + 1;
 
-            const { error: updateError } = await supabase
+            const { error: updateError } = await supabaseAdmin
                 .from('email_metrics')
                 .update(updateData)
                 .eq('date', today)
                 .eq('email_type', emailType);
 
-            if (updateError) throw updateError;
+            if (updateError) {
+                console.error('[Webhook] Update Error:', JSON.stringify(updateError, null, 2));
+                return NextResponse.json({
+                    error: 'Database update error',
+                    details: updateError.message
+                }, { status: 500 });
+            }
+            console.log('[Webhook] Update Successful');
         } else {
-            // Insert
+            console.log('[Webhook] No existing record, inserting new...');
             const insertData: any = {
                 date: today,
                 email_type: emailType,
@@ -82,17 +131,28 @@ export async function POST(req: Request) {
             };
             insertData[columnToIncrement] = 1;
 
-            const { error: insertError } = await supabase
+            const { error: insertError } = await supabaseAdmin
                 .from('email_metrics')
                 .insert(insertData);
 
-            if (insertError) throw insertError;
+            if (insertError) {
+                console.error('[Webhook] Insert Error:', JSON.stringify(insertError, null, 2));
+                return NextResponse.json({
+                    error: 'Database insert error',
+                    details: insertError.message
+                }, { status: 500 });
+            }
+            console.log('[Webhook] Insert Successful');
         }
 
-        return NextResponse.json({ message: 'Metrics updated' }, { status: 200 });
+        return NextResponse.json({ message: 'Metrics updated successfully' }, { status: 200 });
 
     } catch (error) {
-        console.error('Webhook error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('[Webhook] Unexpected Error:', error);
+        console.error('[Webhook] Error details:', JSON.stringify(error, null, 2));
+        return NextResponse.json({
+            error: 'Internal Server Error',
+            details: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
     }
 }
