@@ -29,7 +29,7 @@ export async function POST(request: Request) {
                 to: email,
                 subject: '🌙 Welcome to Bedtime Stories! (Test)',
                 html: getWelcomeEmailHtml(unsubscribeUrl),
-                tags: [{ name: 'type', value: 'welcome' }]
+                tags: { type: 'welcome' }
             });
 
             return NextResponse.json({ message: `Welcome email sent to ${email}` });
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
                 to: email,
                 subject: `🌙 Today's Bedtime Story: ${story.title} (Test)`,
                 html: getStoryEmailHtml(story, unsubscribeUrl),
-                tags: [{ name: 'type', value: 'story' }]
+                tags: { type: 'story' }
             });
 
             return NextResponse.json({ message: `Story email sent to ${email}` });
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
                 to: adminEmail,
                 subject: `📖 Review Story: ${story.title} (Resend)`,
                 html: getAdminReviewEmailHtml(story.title, reviewUrl, story.date, true),
-                tags: [{ name: 'type', value: 'admin_approval' }]
+                tags: { type: 'admin_approval' }
             });
 
             return NextResponse.json({ message: `Approval email resent for "${story.title}"` });
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
                         to: sub.email,
                         subject: `🌙 Today's Bedtime Story: ${story.title}`,
                         html: getStoryEmailHtml(story, unsub),
-                        tags: [{ name: 'type', value: 'story' }]
+                        tags: { type: 'story' }
                     });
                     sent++;
                 } catch (e) {

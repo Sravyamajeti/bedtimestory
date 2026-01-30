@@ -46,11 +46,11 @@ export async function POST(req: Request) {
         }
 
         // Step 4: Extract email type from tags
-        const tags = data.tags || [];
-        const emailTypeTag = tags.find((t: any) => t?.name === 'type');
-        const emailType = emailTypeTag?.value || 'unknown';
+        // Note: Resend sends tags as an object like { "type": "story_email" }, not as an array
+        const tags = data.tags || {};
+        const emailType = tags.type || 'unknown';
 
-        console.log(`[Webhook] Email Type: ${emailType}, Tags:`, tags);
+        console.log(`[Webhook] Email Type: ${emailType}, Tags:`, JSON.stringify(tags));
 
         // Step 5: Validate event type
         const validEvents = [
